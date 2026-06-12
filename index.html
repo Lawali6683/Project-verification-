@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUG - Academic Project Verification and Anti-Plagiarism System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0052cc;
+            --primary-dark: #003d99;
+            --primary-light: #e6f0ff;
+            --accent-color: #00c853;
+            --accent-light: #e8f5e9;
+            --warning-color: #ff9100;
+            --warning-light: #fff3e0;
+            --text-dark: #1c2d42;
+            --text-muted: #66788a;
+            --bg-light: #f4f7fc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 10px 25px rgba(0, 82, 204, 0.06);
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+      
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            
+            background-repeat: repeat;
+            background-size: 180px;
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+       
+        header {
+            background-color: #003399;
+            color: var(--bg-white);
+            padding: 15px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--bg-white);
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .nav-btn-search {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: var(--bg-white);
+        }
+
+        .nav-btn-search:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn-upload {
+            background-color: var(--accent-color);
+            color: var(--bg-white);
+        }
+
+        .nav-btn-upload:hover {
+            background-color: #00a944;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--bg-white);
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+       
+        .hero-banner {
+            background: linear-gradient(135deg, #003399 0%, #0052cc 100%);
+            color: var(--bg-white);
+            padding: 60px 5% 80px 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            right: -5%;
+            bottom: -10%;
+            width: 450px;
+            height: 450px;
+            background-image: url('https://i.imgur.com/MoHW4ON.png');
+            background-repeat: no-repeat;
+            background-size: contain;
+            opacity: 0.19;
+            pointer-events: none;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .hero-text-content h2 {
+            font-size: 34px;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-text-content p {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            max-width: 600px;
+            font-weight: 400;
+        }
+
+        .hero-action-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hero-main-btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .hero-btn-primary {
+            background-color: var(--bg-white);
+            color: var(--primary-color);
+        }
+
+        .hero-btn-primary:hover {
+            background-color: #f0f4f8;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255,255,255,0.2);
+        }
+
+        .hero-btn-secondary {
+            background-color: var(--accent-color);
+            color: var(--bg-white);
+        }
+
+        .hero-btn-secondary:hover {
+            background-color: #00a944;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
+        }
+
+        .hero-visual-element {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .floating-graphic {
+            width: 80%;
+            max-width: 280px;
+            animation: bounce 4s ease-in-out infinite;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.2));
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+       
+        .dashboard-wrapper {
+            max-width: 1400px;
+            margin: -40px auto 50px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+       
+        .feature-panels-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-panel-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .action-panel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(0, 82, 204, 0.12);
+            border-color: var(--primary-color);
+        }
+
+        .panel-icon-box {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .icon-box-blue {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .icon-box-green {
+            background-color: var(--accent-light);
+            color: var(--accent-color);
+        }
+
+        .panel-content-info h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .panel-content-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .panel-action-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .icon-box-green ~ .panel-content-info .panel-action-indicator {
+            color: var(--accent-color);
+        }
+
+       
+        .system-overview-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 35px;
+        }
+
+        .overview-title-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: var(--primary-dark);
+        }
+
+        .overview-title-bar i {
+            font-size: 20px;
+        }
+
+        .overview-title-bar h3 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .overview-desc-text {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            max-width: 900px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-counters-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .kpi-counter-item {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: background var(--transition-speed);
+        }
+
+        .kpi-counter-item:hover {
+            background-color: var(--primary-light);
+        }
+
+        .kpi-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-completed { color: var(--primary-color); }
+        .kpi-pending { color: var(--warning-color); }
+        .kpi-searches { color: #673ab7; }
+        .kpi-secure { color: var(--accent-color); }
+
+        .kpi-metric-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+
+        .kpi-label-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+      
+        .repository-stream-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .stream-panel-block {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .stream-header-strip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stream-heading-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-all-link {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
+
+        .project-record-nodes {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .empty-stream-state {
+            padding: 30px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+      
+        .project-node-item {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            transition: all var(--transition-speed);
+        }
+
+        .project-node-item:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .node-avatar-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .node-avatar-badge.pending-badge {
+            background-color: var(--warning-light);
+            color: var(--warning-color);
+        }
+
+        .node-details-core {
+            flex-grow: 1;
+        }
+
+        .node-project-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+
+        .node-meta-metadata {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+        }
+
+        .meta-meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-pill-badge {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            align-self: flex-start;
+        }
+
+        .pill-completed {
+            background-color: var(--accent-light);
+            color: #008736;
+        }
+
+        .pill-pending {
+            background-color: var(--warning-light);
+            color: #b26500;
+        }
+
+     
+        footer {
+            background-color: #0d1b2a;
+            color: #a3b18a;
+            padding: 40px 5% 30px 5%;
+            margin-top: 60px;
+            border-top: 3px solid var(--primary-color);
+        }
+
+        .footer-grid-layout {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .footer-brand-lockup {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-brand-lockup img {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+            opacity: 0.8;
+        }
+
+        .footer-brand-lockup span {
+            color: var(--bg-white);
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-motto-statement {
+            font-size: 12.5px;
+            color: #94a3b8;
+            max-width: 500px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .footer-motto-statement i {
+            color: var(--accent-color);
+        }
+
+        .footer-divider-line {
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-copyright-terms {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+      
+        @media (max-width: 992px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-text-content h2 { font-size: 28px; }
+            .hero-text-content p { margin-left: auto; margin-right: auto; }
+            .hero-action-actions { justify-content: center; }
+            .hero-visual-element { display: none; }
+            .kpi-counters-row { grid-template-columns: repeat(2, 1fr); }
+            .repository-stream-container { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-buttons {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: #003399;
+                padding: 15px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            }
+            .nav-buttons.mobile-active {
+                display: flex;
+            }
+            .menu-toggle { display: block; }
+            .feature-panels-grid { grid-template-columns: 1fr; }
+            .action-panel-card { padding: 18px; }
+        }
+
+        @media (max-width: 480px) {
+            .brand-text h1 { font-size: 16px; }
+            .brand-text p { display: none; }
+            .hero-banner { padding: 40px 15px 60px 15px; }
+            .hero-text-content h2 { font-size: 22px; }
+            .kpi-counters-row { grid-template-columns: 1fr; }
+            .dashboard-wrapper { margin-top: -25px; padding: 0 12px; }
+            .overview-title-bar h3 { font-size: 16px; }
+            .project-node-item { padding: 12px; gap: 10px; }
+            .node-meta-metadata { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo-section">
+                <img src="https://i.imgur.com/MoHW4ON.png" alt="FUG Logo" class="logo-img">
+                <div class="brand-text">
+                    <h1>FUG</h1>
+                    <p>Academic Project Verification System</p>
+                </div>
+            </a>
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <nav class="nav-buttons" id="navButtons">
+                <a href="projectSearch.html" class="nav-btn nav-btn-search">
+                    <i class="fa-solid fa-magnifying-glass"></i> Search Project
+                </a>
+                <a href="uploadProject.html" class="nav-btn nav-btn-upload">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload Project
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero-banner">
+        <div class="hero-container">
+            <div class="hero-text-content">
+                <h2>FUG Academic Project Verification and Anti-Plagiarism System</h2>
+                <p>Prevent duplicate project topics, check selection availability instantly, and safeguard research originality across the Department of Computer Science.</p>
+                <div class="hero-action-actions">
+                    <a href="projectSearch.html" class="hero-main-btn hero-btn-primary">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search project 
+                    </a>
+                    <a href="uploadProject.html" class="hero-main-btn hero-btn-secondary">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Project
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual-element">
+                <img src="https://i.imgur.com/MoHW4ON.png" alt="FUG Crest Graphic" class="floating-graphic">
+            </div>
+        </div>
+    </section>
+
+    <main class="dashboard-wrapper">
+        
+        <div class="feature-panels-grid">
+            <a href="projectSearch.html" class="action-panel-card">
+                <div class="panel-icon-box icon-box-blue">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <div class="panel-content-info">
+                    <h3>Search Project</h3>
+                    <p>Check if your proposed academic research topic already exists or matches existing records.</p>
+                    <span class="panel-action-indicator">Explore Database <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>
+            <a href="uploadProject.html" class="action-panel-card">
+                <div class="panel-icon-box icon-box-green">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <div class="panel-content-info">
+                    <h3>Upload Project</h3>
+                    <p>Submit and archive approved new academic titles into the verification framework repository.</p>
+                    <span class="panel-action-indicator">Submit Content <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>
+        </div>
+
+        <section class="system-overview-card">
+            <div class="overview-title-bar">
+                <i class="fa-solid fa-circle-info"></i>
+                <h3>System Overview</h3>
+            </div>
+            <p class="overview-desc-text">
+                This validation framework reduces plagiarism by cross-referencing and maintaining active records of approved and ongoing project topics. It ensures comprehensive record storage and integrity tracking.
+            </p>
+            <div class="kpi-counters-row">
+                <div class="kpi-counter-item">
+                    <div class="kpi-icon kpi-completed"><i class="fa-solid fa-book-bookmark"></i></div>
+                    <div class="kpi-metric-val" id="countCompleted">2</div>
+                    <div class="kpi-label-text">Completed Projects</div>
+                </div>
+                <div class="kpi-counter-item">
+                    <div class="kpi-icon kpi-pending"><i class="fa-solid fa-clock"></i></div>
+                    <div class="kpi-metric-val" id="countPending">0</div>
+                    <div class="kpi-label-text">Pending Projects</div>
+                </div>
+                <div class="kpi-counter-item">
+                    <div class="kpi-icon kpi-searches"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="kpi-metric-val" id="countSearches">156</div>
+                    <div class="kpi-label-text">Total Searches</div>
+                </div>
+                <div class="kpi-counter-item">
+                    <div class="kpi-icon kpi-secure"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="kpi-metric-val">100%</div>
+                    <div class="kpi-label-text">System Secure</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="repository-stream-container">
+            <section class="stream-panel-block">
+                <div class="stream-header-strip">
+                    <h3 class="stream-heading-title"><i class="fa-solid fa-circle-check" style="color: var(--accent-color);"></i> Recent Completed Projects</h3>
+                    <a href="projectSearch.html" class="view-all-link">View All</a>
+                </div>
+                <div class="project-record-nodes" id="completedNodesContainer">
+                    </div>
+            </section>
+
+            <section class="stream-panel-block">
+                <div class="stream-header-strip">
+                    <h3 class="stream-heading-title"><i class="fa-solid fa-clock" style="color: var(--warning-color);"></i> Recent Pending Projects</h3>
+                    <a href="projectSearch.html" class="view-all-link">View All</a>
+                </div>
+                <div class="project-record-nodes" id="pendingNodesContainer">
+                    </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-grid-layout">
+            <div class="footer-brand-lockup">
+                <img src="https://i.imgur.com/MoHW4ON.png" alt="FUG Footer Emblem">
+                <span>FUG Repository Hub</span>
+            </div>
+            <div class="footer-motto-statement">
+                <i class="fa-solid fa-shield-heart"></i> Building Integrity, Promoting Innovation
+            </div>
+            <div class="footer-divider-line"></div>
+            <div class="footer-copyright-terms">
+                &copy; 2026 FUG - Department of Computer Science. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            
+         
+            const menuToggle = document.getElementById('menuToggle');
+            const navButtons = document.getElementById('navButtons');
+            if (menuToggle && navButtons) {
+                menuToggle.addEventListener('click', function() {
+                    navButtons.classList.toggle('mobile-active');
+                });
+            }
+
+            
+            const defaultCompletedData = [
+                {
+                    id: 1,
+                    projectName: "Development of a Blockchain-Based Academic Project Verification and Anti-Plagiarism Repository System",
+                    summary: "A blockchain-powered academic repository system capable of project verification, originality checking, and secure record storage.",
+                    studentName: "Ibrahim Abdulhakim",
+                    admissionNumber: "FUG/CSC/2026/001",
+                    dateCreated: "07/10/2026",
+                    projectLink: "https://projectverification.pages.dev",
+                    pdfData: "",
+                    status: "completed"
+                },
+                {
+                    id: 2,
+                    projectName: "Smart Agriculture Pest Detection System",
+                    summary: "Artificial intelligence system for detecting crop pests and diseases.",
+                    studentName: "Muhammad Sani",
+                    admissionNumber: "FUG/CSC/2025/014",
+                    dateCreated: "15/09/2025",
+                    projectLink: "#",
+                    pdfData: "",
+                    status: "completed"
+                }
+            ];
+
+           
+            const COMPLETED_KEY = 'completedProjects';
+            const PENDING_KEY = 'pendingProjects';
+            const SEARCH_COUNT_KEY = 'totalSearchesCount';
+
+           
+            if (!localStorage.getItem(COMPLETED_KEY)) {
+                localStorage.setItem(COMPLETED_KEY, JSON.stringify(defaultCompletedData));
+            }
+            if (!localStorage.getItem(PENDING_KEY)) {
+                localStorage.setItem(PENDING_KEY, JSON.stringify([]));
+            }
+            if (!localStorage.getItem(SEARCH_COUNT_KEY)) {
+                localStorage.setItem(SEARCH_COUNT_KEY, "156");
+            }
+
+           
+            const completedList = JSON.parse(localStorage.getItem(COMPLETED_KEY)) || [];
+            const pendingList = JSON.parse(localStorage.getItem(PENDING_KEY)) || [];
+            const totalSearches = localStorage.getItem(SEARCH_COUNT_KEY) || "156";
+
+           
+            document.getElementById('countCompleted').textContent = completedList.length;
+            document.getElementById('countPending').textContent = pendingList.length;
+            document.getElementById('countSearches').textContent = totalSearches;
+
+           
+            const completedContainer = document.getElementById('completedNodesContainer');
+            const pendingContainer = document.getElementById('pendingNodesContainer');
+
+            
+            if (completedList.length === 0) {
+                completedContainer.innerHTML = '<div class="empty-stream-state">No completed projects found in database cache.</div>';
+            } else {
+              
+                const latestCompleted = completedList.slice().reverse().slice(0, 3);
+                completedContainer.innerHTML = latestCompleted.map(proj => `
+                    <div class="project-node-item">
+                        <div class="node-avatar-badge">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <div class="node-details-core">
+                            <h4 class="node-project-title">${proj.projectName}</h4>
+                            <div class="node-meta-metadata">
+                                <span class="meta-meta-item"><i class="fa-solid fa-user"></i> ${proj.studentName}</span>
+                                <span class="meta-meta-item"><i class="fa-solid fa-calendar-days"></i> ${proj.dateCreated}</span>
+                            </div>
+                        </div>
+                        <span class="status-pill-badge pill-completed">${proj.status}</span>
+                    </div>
+                `).join('');
+            }
+
+         
+            if (pendingList.length === 0) {
+                pendingContainer.innerHTML = '<div class="empty-stream-state">No active or pending topics under validation review.</div>';
+            } else {
+                const latestPending = pendingList.slice().reverse().slice(0, 3);
+                pendingContainer.innerHTML = latestPending.map(proj => `
+                    <div class="project-node-item">
+                        <div class="node-avatar-badge pending-badge">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                        </div>
+                        <div class="node-details-core">
+                            <h4 class="node-project-title">${proj.projectName}</h4>
+                            <div class="node-meta-metadata">
+                                <span class="meta-meta-item"><i class="fa-solid fa-user"></i> ${proj.studentName || 'Anonymous Student'}</span>
+                                <span class="meta-meta-item"><i class="fa-solid fa-calendar-days"></i> ${proj.dateCreated || 'Recent'}</span>
+                            </div>
+                        </div>
+                        <span class="status-pill-badge pill-pending">${proj.status || 'pending'}</span>
+                    </div>
+                `).join('');
+            }
+
+        });
+    </script>
+</body>
+</html>
