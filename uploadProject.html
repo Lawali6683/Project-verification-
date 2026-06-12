@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Repository Management - FUG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0052cc;
+            --primary-dark: #003399;
+            --primary-light: #e6f0ff;
+            --accent-color: #00c853;
+            --accent-light: #e8f5e9;
+            --warning-color: #ff9100;
+            --warning-light: #fff3e0;
+            --danger-color: #d32f2f;
+            --danger-light: #ffebee;
+            --text-dark: #1c2d42;
+            --text-muted: #66788a;
+            --bg-light: #f4f7fc;
+            --bg-white: #ffffff;
+            --border-color: #cbd5e1;
+            --card-shadow: 0 10px 25px rgba(0, 82, 204, 0.06);
+            --transition-speed: 0.25s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+      
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://i.imgur.com/MoHW4ON.png');
+            background-repeat: repeat;
+            background-size: 160px;
+            opacity: 0.09;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+     
+        header {
+            background-color: var(--primary-dark);
+            color: var(--bg-white);
+            padding: 16px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-link-btn {
+            color: var(--bg-white);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 8px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--transition-speed);
+        }
+
+        .back-link-btn:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .header-meta h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .header-meta p {
+            font-size: 11px;
+            opacity: 0.85;
+        }
+
+        .header-right-icon {
+            font-size: 22px;
+            opacity: 0.9;
+        }
+
+       
+        .auth-viewport-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 24px 16px;
+        }
+
+        .auth-gate-card {
+            background: var(--bg-white);
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: var(--card-shadow);
+            padding: 32px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .auth-icon-shield {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 24px;
+        }
+
+        .auth-gate-card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .auth-gate-card p {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+       
+        .form-input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .form-input-group i {
+            position: absolute;
+            left: 14px;
+            top: 15px;
+            color: var(--text-muted);
+            font-size: 15px;
+            transition: color var(--transition-speed);
+        }
+
+        .form-control-input {
+            width: 100%;
+            padding: 13px 16px 13px 42px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-dark);
+            background-color: var(--bg-white);
+            outline: none;
+            transition: all var(--transition-speed);
+        }
+
+        .form-control-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.12);
+        }
+
+        .form-control-input:focus + i {
+            color: var(--primary-color);
+        }
+
+        .password-toggle-eye {
+            position: absolute;
+            right: 14px;
+            top: 15px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+       
+        .btn-core-action {
+            width: 100%;
+            padding: 13px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all var(--transition-speed);
+        }
+
+        .btn-primary-action {
+            background-color: var(--primary-color);
+            color: var(--bg-white);
+            box-shadow: 0 4px 12px rgba(0, 82, 204, 0.2);
+        }
+
+        .btn-primary-action:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+      
+        .security-banner-info {
+            margin-top: 32px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 24px;
+            text-align: left;
+        }
+
+        .security-banner-info h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-dark);
+        }
+
+        .security-bullet-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .security-bullet-node {
+            text-align: center;
+            background-color: var(--bg-light);
+            padding: 10px 4px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .security-bullet-node i {
+            font-size: 16px;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+        }
+
+        .security-bullet-node p {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .security-hint-box {
+            background-color: var(--primary-light);
+            border: 1px solid rgba(0, 82, 204, 0.1);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11.5px;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+      
+        .error-feedback-alert {
+            display: none;
+            background-color: var(--danger-light);
+            color: var(--danger-color);
+            border: 1px solid rgba(211, 47, 47, 0.15);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            align-items: center;
+            gap: 8px;
+        }
+
+      
+        .admin-dashboard-layout {
+            display: none;
+            max-width: 1200px;
+            width: 100%;
+            margin: 24px auto 60px auto;
+            padding: 0 16px;
+            flex-grow: 1;
+        }
+
+      
+        .stats-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-widget-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-widget-info p {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-widget-info h3 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-top: 4px;
+        }
+
+        .stat-widget-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .icon-blue { background-color: var(--primary-light); color: var(--primary-color); }
+        .icon-orange { background-color: var(--warning-light); color: var(--warning-color); }
+        .icon-green { background-color: var(--accent-light); color: var(--accent-color); }
+        .icon-purple { background-color: #f3e5f5; color: #9c27b0; }
+              
+           
+
+        .engine-card-panel {
+            background: var(--bg-white);
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: var(--card-shadow);
+            padding: 24px;
+        }
+
+        .panel-headline-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            border-bottom: 1px solid var(--bg-light);
+            padding-bottom: 12px;
+        }
+
+        .panel-headline-title span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+      
+        .form-row-flexible {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        textarea.form-control-input {
+            min-height: 100px;
+            resize: vertical;
+            top: 0;
+        }
+
+        textarea.form-control-input + i {
+            top: 16px;
+        }
+
+       
+        .file-upload-wrapper {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            background-color: var(--bg-light);
+            cursor: pointer;
+            transition: border-color var(--transition-speed);
+            margin-bottom: 20px;
+        }
+
+        .file-upload-wrapper:hover {
+            border-color: var(--primary-color);
+        }
+
+        .file-upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 13.5px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .file-upload-label span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-upload-btn-mock {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-action-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-split-action {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all var(--transition-speed);
+        }
+
+        .btn-secondary-clear {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary-clear:hover {
+            background-color: #e2e8f0;
+        }
+
+     
+        .table-filter-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+            background-color: var(--bg-light);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .search-filter-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .search-filter-box input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-filter-box i {
+            position: absolute;
+            left: 12px;
+            top: 11px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .sorting-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sorting-actions-group select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            background-color: var(--bg-white);
+            color: var(--text-dark);
+            outline: none;
+            cursor: pointer;
+        }
+
+      
+        .responsive-table-scroller {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background-color: var(--bg-white);
+        }
+
+        .data-repository-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .data-repository-table th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .data-repository-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+
+        .data-repository-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .project-title-cell {
+            font-weight: 600;
+            color: var(--primary-dark);
+            max-width: 280px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .status-pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .pill-completed { background-color: var(--accent-light); color: #007c33; }
+        .pill-pending { background-color: var(--warning-light); color: #b26500; }
+
+        .row-actions-flex {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-table-action {
+            border: none;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .btn-table-action:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .btn-action-delete:hover {
+            background-color: var(--danger-light);
+            color: var(--danger-color);
+        }
+
+        .btn-action-approve:hover {
+            background-color: var(--accent-light);
+            color: var(--accent-color);
+        }
+
+        .empty-table-state {
+            text-align: center;
+            padding: 40px 16px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .empty-table-state i {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: block;
+            opacity: 0.5;
+        }
+
+     
+        .modal-overlay-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(13, 27, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-body-panel {
+            background-color: var(--bg-white);
+            border-radius: 14px;
+            max-width: 500px;
+            width: 100%;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header-strip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header-strip h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .modal-main-content {
+            font-size: 13.5px;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .entity-profile-card {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .entity-row-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            padding: 10px 14px;
+            font-size: 12.5px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f8fafc;
+        }
+
+        .entity-row-item:last-child { border-bottom: none; }
+        .entity-label { font-weight: 600; color: var(--text-muted); }
+        .entity-value { font-weight: 500; color: var(--text-dark); word-break: break-word; }
+
+        .modal-footer-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-modal-cta {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-modal-confirm-delete { background-color: var(--danger-color); color: var(--bg-white); }
+        .btn-modal-cancel { background-color: var(--bg-light); color: var(--text-dark); }
+
+     
+        .toast-notification {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: #1e293b;
+            color: var(--bg-white);
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 3000;
+            align-items: center;
+            gap: 10px;
+            animation: toastSlideUp 0.3s ease;
+        }
+
+        @keyframes toastSlideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast-notification i {
+            font-size: 16px;
+        }
+        .toast-icon-success { color: var(--accent-color); }
+        .toast-icon-delete { color: #ff5252; }
+        .toast-icon-approval { color: #448aff; }
+
+      
+        footer {
+            background-color: #0d1b2a;
+            color: #64748b;
+            padding: 24px 16px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            font-size: 12px;
+            margin-top: auto;
+        }
+
+      
+        @media (max-width: 992px) {
+            .stats-matrix-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .form-row-flexible { grid-template-columns: 1fr; gap: 0; }
+            .table-filter-toolbar { flex-direction: column; align-items: stretch; }
+            .search-filter-box { max-width: 100%; }
+            .sorting-actions-group { justify-content: space-between; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-matrix-grid { grid-template-columns: 1fr; }
+            .form-action-row { flex-direction: column; }
+            .modal-footer-actions { flex-direction: column-reverse; }
+            .btn-modal-cta { width: 100%; }
+            .header-meta h1 { font-size: 15px; }
+            .entity-row-item { grid-template-columns: 1fr; gap: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <a href="index.html" class="back-link-btn" title="Back to Homepage">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="header-meta">
+                    <h1 id="headerMainTitle">Administrative Gate Access</h1>
+                    <p>FUG Academic Anti-Plagiarism Repository Framework</p>
+                </div>
+            </div>
+            <div class="header-right-icon">
+                <i class="fa-solid fa-shield-halved" id="headerContextIcon"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="auth-viewport-wrapper" id="authGatewayScreenView">
+        <section class="auth-gate-card">
+            <div class="auth-icon-shield">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2>Admin Access Required</h2>
+            <p>This area is secured. Please enter the admin password to continue into management clusters.</p>
+
+            <div class="error-feedback-alert" id="authErrorFeedbackBox">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Incorrect password entry token. Verification failed.</span>
+            </div>
+
+            <form id="authGatewayForm" onsubmit="event.preventDefault(); processAdminAuthenticationGateway();">
+                <div class="form-input-group">
+                    <input type="password" id="adminPasswordInput" class="form-control-input" placeholder="Enter Password" required>
+                    <i class="fa-solid fa-key"></i>
+                  
+                </div>
+                <button type="submit" class="btn-core-action btn-primary-action">
+                    <i class="fa-solid fa-unlock-keyhole"></i> Unlock Access Dashboard
+                </button>
+            </form>
+
+            <div class="security-banner-info">
+                <h3><i class="fa-solid fa-fingerprint"></i> System Security</h3>
+                <div class="security-bullet-grid">
+                    <div class="security-bullet-node">
+                        <i class="fa-solid fa-vault"></i>
+                        <p>Data Protection</p>
+                    </div>
+                    <div class="security-bullet-node">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <p>Access Control</p>
+                    </div>
+                    <div class="security-bullet-node">
+                        <i class="fa-solid fa-award"></i>
+                        <p>Integrity First</p>
+                    </div>
+                </div>
+                <div class="security-hint-box">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Academic Staff: <strong>Ally</strong></span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <main class="admin-dashboard-layout" id="adminWorkspaceDashboardView">
+        
+        <section class="stats-matrix-grid">
+            <div class="stat-widget-card">
+                <div class="stat-widget-info">
+                    <p>Completed Projects</p>
+                    <h3 id="statCompletedCounter">0</h3>
+                </div>
+                <div class="stat-widget-icon icon-blue"><i class="fa-solid fa-circle-check"></i></div>
+            </div>
+            <div class="stat-widget-card">
+                <div class="stat-widget-info">
+                    <p>Pending Projects</p>
+                    <h3 id="statPendingCounter">0</h3>
+                </div>
+                <div class="stat-widget-icon icon-orange"><i class="fa-solid fa-hourglass-half"></i></div>
+            </div>
+            <div class="stat-widget-card">
+                <div class="stat-widget-info">
+                    <p>Total Repository</p>
+                    <h3 id="statTotalCounter">0</h3>
+                </div>
+                <div class="stat-widget-icon icon-green"><i class="fa-solid fa-folder-open"></i></div>
+            </div>
+            <div class="stat-widget-card">
+                <div class="stat-widget-info">
+                    <p>System Storage</p>
+                    <h3 id="statStorageUsageBytes">0.00 KB</h3>
+                </div>
+                <div class="stat-widget-icon icon-purple"><i class="fa-solid fa-hard-drive"></i></div>
+            </div>
+        </section>
+
+        <div class="dashboard-workspace-grid">
+            
+            <section class="engine-card-panel">
+                <h2 class="panel-headline-title">
+                    <span><i class="fa-solid fa-file-import"></i> Academic Repository Records Archive Upload</span>
+                </h2>
+                
+                <form id="projectUploadForm" onsubmit="event.preventDefault(); commitProjectRecordToDatabase();">
+                    
+                    <div class="form-input-group">
+                        <input type="text" id="formProjectName" class="form-control-input" placeholder="Project Name / Research Title" required>
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+
+                    <div class="form-input-group">
+                        <textarea id="formProjectSummary" class="form-control-input" placeholder="Project Summary / Abstract Context..." required></textarea>
+                        <i class="fa-solid fa-align-left"></i>
+                    </div>
+
+                    <div class="form-row-flexible">
+                        <div class="form-input-group">
+                            <input type="text" id="formStudentName" class="form-control-input" placeholder="Student Full Name" required>
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div class="form-input-group">
+                            <input type="text" id="formAdminNumber" class="form-control-input" placeholder="Admission Number" required>
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-row-flexible">
+                        <div class="form-input-group">
+                            <input type="text" id="formDepartment" class="form-control-input" placeholder="Department" required>
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <div class="form-input-group">
+                            <input type="text" id="formLevel" class="form-control-input" placeholder="Academic Level (e.g., 400 Level)" required>
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-row-flexible">
+                        <div class="form-input-group">
+                            <input type="text" id="formSupervisor" class="form-control-input" placeholder="Supervisor Name" required>
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div class="form-input-group">
+                            <input type="date" id="formDateCreated" class="form-control-input" required>
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-input-group">
+                        <input type="url" id="formProjectLink" class="form-control-input" placeholder="Project Deployment Web Link (Optional, use '#' if none)">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="formPdfFile" class="file-upload-input" accept=".pdf" onchange="processPdfBinaryConversion(this)">
+                        <div class="file-upload-label">
+                            <span><i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> <span id="uploadLabelIndicatorText">Upload Project PDF Document (Optional)</span></span>
+                            <div class="file-upload-btn-mock">Choose File</div>
+                        </div>
+                    </div>
+
+                    <div class="form-action-row">
+                        <button type="submit" class="btn-split-action btn-primary-action">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Save Project Record
+                        </button>
+                        <button type="button" class="btn-split-action btn-secondary-clear" onclick="clearWorkspaceInputFields()">
+                            <i class="fa-solid fa-broom"></i> Clear Form
+                        </button>
+                    </div>
+
+                </form>
+            </section>
+
+            <section class="engine-card-panel">
+                <h2 class="panel-headline-title">
+                    <span><i class="fa-solid fa-hourglass-block" style="color: var(--warning-color);"></i> Pending Allocations Allocations Queue Buffer</span>
+                </h2>
+
+                <div class="responsive-table-scroller">
+                    <table class="data-repository-table">
+                        <thead>
+                            <tr>
+                                <th>Topic Title / Proposed Scope</th>
+                                <th>Student Claimant</th>
+                                <th>Department</th>
+                                <th>Actions Allocation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingProjectsTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="engine-card-panel">
+                <h2 class="panel-headline-title">
+                    <span><i class="fa-solid fa-database" style="color: var(--accent-color);"></i> Active Verified Documents Central Repository Table</span>
+                </h2>
+
+                <div class="table-filter-toolbar">
+                    <div class="search-filter-box">
+                        <input type="text" id="tableFilterSearchInput" placeholder="Search repository by name, student or token criteria..." oninput="refreshDataRepositoryViews()">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <div class="sorting-actions-group">
+                        <select id="tableSortCriteriaDropdown" onchange="refreshDataRepositoryViews()">
+                            <option value="date-desc">Date Array: Newest First</option>
+                            <option value="date-asc">Date Array: Oldest First</option>
+                            <option value="title-asc">Linguistic Sort: Title A-Z</option>
+                            <option value="title-desc">Linguistic Sort: Title Z-A</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="responsive-table-scroller">
+                    <table class="data-repository-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Project Name / Document Title</th>
+                                <th>Student Author</th>
+                                <th>Department / Faculty Unit</th>
+                                <th>Date Archived</th>
+                                <th>Status Tiers</th>
+                                <th>Management Actions Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completedProjectsTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <div class="modal-overlay-container" id="inspectorRecordViewModal">
+        <div class="modal-body-panel">
+            <div class="modal-header-strip">
+                <h3><i class="fa-solid fa-passport"></i> Academic Document Archive Inspector</h3>
+                <button class="modal-close-btn" onclick="closeInspectorModalView()">&times;</button>
+            </div>
+            <div class="modal-main-content" id="inspectorModalMainBody">
+                </div>
+            <div class="modal-footer-actions">
+                <button class="btn-modal-cta btn-modal-cancel" onclick="closeInspectorModalView()">Close Metadata Blueprint</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay-container" id="destructiveActionConfirmModal">
+        <div class="modal-body-panel">
+            <div class="modal-header-strip">
+                <h3 style="color: var(--danger-color);"><i class="fa-solid fa-triangle-exclamation"></i> Critical Erasure Confirmation Check</h3>
+                <button class="modal-close-btn" onclick="closeDestructiveConfirmationModal()">&times;</button>
+            </div>
+            <div class="modal-main-content">
+                <p>Are you absolutely certain you intend to permanently delete this research document entry profile node from the institutional ledger files? This process completely purges all localized blocks cache vectors and cannot be reversed under any circumstances.</p>
+                <div class="entity-profile-card">
+                    <div class="entity-row-item"><div class="entity-label">Target ID</div><div class="entity-value" id="deleteTargetIdLabel">N/A</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Document Title</div><div class="entity-value" id="deleteTargetTitleLabel">N/A</div></div>
+                </div>
+            </div>
+            <div class="modal-footer-actions">
+                <button class="btn-modal-cta btn-modal-cancel" onclick="closeDestructiveConfirmationModal()">Cancel Safe Hold</button>
+                <button class="btn-modal-cta btn-modal-confirm-delete" id="executePurgeActionButton">Confirm Permanent Purge</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-notification" id="systemToastPopNotification">
+        <i class="fa-solid id-toast-context-icon" id="toastFeedbackComponentIcon"></i>
+        <span id="toastFeedbackComponentMessage">Operational change committed into cloud systems arrays nodes pipeline.</span>
+    </div>
+
+    <footer>
+        &copy; 2026 FUG - Department of Computer Science. All Rights Reserved. System Integrity Core Tier-1.
+    </footer>
+
+    <script>
+       
+        const KEY_COMPLETED = 'completedProjects';
+        const KEY_PENDING = 'pendingProjects';
+
+       
+        let transientPdfBase64PayloadString = "";
+        let globalDeletionPointerTargetId = null;
+        let globalDeletionPointerTargetScopeType = ""; // 'completed' or 'pending'
+
+        document.addEventListener("DOMContentLoaded", function() {
+            setFormDefaultDateValue();
+            synchronizeApplicationDatabaseMemory();
+        });
+
+       
+        function synchronizeApplicationDatabaseMemory() {
+            if (!localStorage.getItem(KEY_COMPLETED)) {
+                localStorage.setItem(KEY_COMPLETED, JSON.stringify([]));
+            }
+            if (!localStorage.getItem(KEY_PENDING)) {
+                localStorage.setItem(KEY_PENDING, JSON.stringify([]));
+            }
+        }
+
+        function setFormDefaultDateValue() {
+            const todayDate = new Date().toISOString().split('T')[0];
+            document.getElementById('formDateCreated').value = todayDate;
+        }
+
+     
+        function togglePasswordInputVisibility() {
+            const pwdInput = document.getElementById('adminPasswordInput');
+            const iconEye = document.querySelector('.password-toggle-eye');
+            if (pwdInput.type === "password") {
+                pwdInput.type = "text";
+                iconEye.classList.remove('fa-eye');
+                iconEye.classList.add('fa-eye-slash');
+            } else {
+                pwdInput.type = "password";
+                iconEye.classList.remove('fa-eye-slash');
+                iconEye.classList.add('fa-eye');
+            }
+        }
+
+       
+        function processAdminAuthenticationGateway() {
+            const enteredPassword = document.getElementById('adminPasswordInput').value;
+            const errorBox = document.getElementById('authErrorFeedbackBox');
+
+            if (enteredPassword === "FUG77") {
+                
+                errorBox.style.display = 'none';
+                
+               
+                document.getElementById('authGatewayScreenView').style.display = 'none';
+                
+               
+                document.getElementById('headerMainTitle').textContent = "Project Repository Management";
+                const ctxIcon = document.getElementById('headerContextIcon');
+                ctxIcon.className = "fa-solid fa-gears";
+                
+               
+                document.getElementById('adminWorkspaceDashboardView').style.display = 'block';
+                
+             
+                refreshDataRepositoryViews();
+                triggerToastNotification("Authentication token parsed. Administrative dashboard initialized successfully.", "success");
+            } else {
+                errorBox.style.display = 'flex';
+                document.getElementById('adminPasswordInput').value = "";
+                triggerToastNotification("Access authorization mapping transaction aborted: Invalid credentials.", "delete");
+            }
+        }
+
+      
+        function processPdfBinaryConversion(fileInputElement) {
+            const displayLabel = document.getElementById('uploadLabelIndicatorText');
+            if (fileInputElement.files && fileInputElement.files[0]) {
+                const targetFile = fileInputElement.files[0];
+
+                if (targetFile.type !== "application/pdf") {
+                    triggerToastNotification("Validation exception: Sourced stream asset file object type must strictly be structured PDF format extension.", "delete");
+                    fileInputElement.value = "";
+                    return;
+                }
+
+                
+                if (targetFile.size > 1.5 * 1024 * 1024) { 
+                    triggerToastNotification("Validation constraint boundary breached: Sourced asset package index exceeds safe localized cache threshold capacity limit (Max 1.5MB).", "delete");
+                    fileInputElement.value = "";
+                    return;
+                }
+
+                const fileStreamReader = new FileReader();
+                fileStreamReader.onload = function(eventResult) {
+                    transientPdfBase64PayloadString = eventResult.target.result;
+                    displayLabel.textContent = `${targetFile.name} (${Math.round(targetFile.size / 1024)} KB) Parsed Ready`;
+                    displayLabel.style.color = "var(--accent-color)";
+                    displayLabel.style.fontWeight = "700";
+                };
+                fileStreamReader.readAsDataURL(targetFile);
+            }
+        }
+
+       
+        function runLiveStorageCapacityCalculations() {
+            const completedList = JSON.parse(localStorage.getItem(KEY_COMPLETED)) || [];
+            const pendingList = JSON.parse(localStorage.getItem(KEY_PENDING)) || [];
+
+            const completedCount = completedList.length;
+            const pendingCount = pendingList.length;
+            const totalCount = completedCount + pendingCount;
+
+            document.getElementById('statCompletedCounter').textContent = completedCount;
+            document.getElementById('statPendingCounter').textContent = pendingCount;
+            document.getElementById('statTotalCounter').textContent = totalCount;
+
+           
+            let totalStringCharactersPayloadAllocationBytes = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    totalStringCharactersPayloadAllocationBytes += ((localStorage[key].length + key.length) * 2);
+                }
+            }
+            
+           
+            const sizeInKilobytes = totalStringCharactersPayloadAllocationBytes / 1024;
+            document.getElementById('statStorageUsageBytes').textContent = `${sizeInKilobytes.toFixed(2)} KB`;
+        }
+
+       
+        function clearWorkspaceInputFields() {
+            document.getElementById('projectUploadForm').reset();
+            transientPdfBase64PayloadString = "";
+            const displayLabel = document.getElementById('uploadLabelIndicatorText');
+            displayLabel.textContent = "Upload Project PDF Document (Optional)";
+            displayLabel.style.color = "inherit";
+            displayLabel.style.fontWeight = "normal";
+            setFormDefaultDateValue();
+        }
+
+      
+        function commitProjectRecordToDatabase() {
+            const completedList = JSON.parse(localStorage.getItem(KEY_COMPLETED)) || [];
+
+            const newProjectObjectRecordNode = {
+                id: 'FUG_PROJ_' + Date.now().toString().slice(-6),
+                projectName: document.getElementById('formProjectName').value.trim(),
+                summary: document.getElementById('formProjectSummary').value.trim(),
+                studentName: document.getElementById('formStudentName').value.trim(),
+                admissionNumber: document.getElementById('formAdminNumber').value.trim(),
+                department: document.getElementById('formDepartment').value.trim(),
+                level: document.getElementById('formLevel').value.trim(),
+                supervisor: document.getElementById('formSupervisor').value.trim(),
+                dateCreated: document.getElementById('formDateCreated').value,
+                projectLink: document.getElementById('formProjectLink').value.trim() || "#",
+                pdfData: transientPdfBase64PayloadString || "",
+                status: "completed"
+            };
+
+            completedList.push(newProjectObjectRecordNode);
+            localStorage.setItem(KEY_COMPLETED, JSON.stringify(completedList));
+
+            clearWorkspaceInputFields();
+            refreshDataRepositoryViews();
+            triggerToastNotification("New academic document profile successfully minted into active data repositories verified ledger logs tier.", "success");
+        }
+
+       
+        function refreshDataRepositoryViews() {
+            runLiveStorageCapacityCalculations();
+
+            const completedList = JSON.parse(localStorage.getItem(KEY_COMPLETED)) || [];
+            const pendingList = JSON.parse(localStorage.getItem(KEY_PENDING)) || [];
+
+            const searchFilterValue = document.getElementById('tableFilterSearchInput').value.toLowerCase().trim();
+            const sortCriteriaType = document.getElementById('tableSortCriteriaDropdown').value;
+
+            const completedTableBody = document.getElementById('completedProjectsTableBody');
+            const pendingTableBody = document.getElementById('pendingProjectsTableBody');
+
+          
+            if (pendingList.length === 0) {
+                pendingTableBody.innerHTML = `<tr><td colspan="4" class="empty-table-state"><i class="fa-solid fa-tray"></i>No allocations waiting inside structural process queues pipelines.</td></tr>`;
+            } else {
+                pendingTableBody.innerHTML = pendingList.map(item => `
+                    <tr>
+                        <td class="project-title-cell" title="${item.projectName}">${item.projectName}</td>
+                        <td><strong>${item.studentName}</strong><br><small style="color:var(--text-muted);">${item.admissionNumber}</small></td>
+                        <td>${item.department}</td>
+                        <td>
+                            <div class="row-actions-flex">
+                                <button class="btn-table-action btn-action-approve" onclick="approvePendingProjectRecordNode('${item.id}')" title="Approve Allocation & Move into Verified Repository Ledger">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </button>
+                                <button class="btn-table-action btn-action-delete" onclick="triggerDestructivePurgeConfirmationModal('${item.id}', 'pending')" title="Reject Registration and Delete Item Node Record">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+         
+            let outputCompletedFilteredArray = completedList.filter(item => {
+                return item.projectName.toLowerCase().includes(searchFilterValue) ||
+                       item.studentName.toLowerCase().includes(searchFilterValue) ||
+                       item.admissionNumber.toLowerCase().includes(searchFilterValue) ||
+                       item.department.toLowerCase().includes(searchFilterValue) ||
+                       item.id.toLowerCase().includes(searchFilterValue);
+            });
+
+          
+            if (sortCriteriaType === "date-desc") {
+                outputCompletedFilteredArray.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+            } else if (sortCriteriaType === "date-asc") {
+                outputCompletedFilteredArray.sort((a, b) => new Date(a.dateCreated) - new Date(b.dateCreated));
+            } else if (sortCriteriaType === "title-asc") {
+                outputCompletedFilteredArray.sort((a, b) => a.projectName.localeCompare(b.projectName));
+            } else if (sortCriteriaType === "title-desc") {
+                outputCompletedFilteredArray.sort((a, b) => b.projectName.localeCompare(a.projectName));
+            }
+
+           
+            if (outputCompletedFilteredArray.length === 0) {
+                completedTableBody.innerHTML = `<tr><td colspan="7" class="empty-table-state"><i class="fa-solid fa-folder-open"></i>No matching records corresponding with current filter query parameters found.</td></tr>`;
+            } else {
+                completedTableBody.innerHTML = outputCompletedFilteredArray.map(item => `
+                    <tr>
+                        <td><small style="font-family:monospace; font-weight:700; color:var(--text-muted);">${item.id}</small></td>
+                        <td class="project-title-cell" title="${item.projectName}">${item.projectName}</td>
+                        <td><strong>${item.studentName}</strong></td>
+                        <td>${item.department}</td>
+                        <td>${item.dateCreated}</td>
+                        <td><span class="status-pill-badge pill-completed"><i class="fa-solid fa-circle-check"></i> Verified</span></td>
+                        <td>
+                            <div class="row-actions-flex">
+                                <button class="btn-table-action" onclick="invokeRecordInspectorViewerPanel('${item.id}')" title="Inspect Full Metadata Elements Frame">
+                                    <i class="fa-solid fa-expand"></i>
+                                </button>
+                                ${item.pdfData ? `
+                                    <a href="${item.pdfData}" download="${item.studentName}_Research_Document.pdf" class="btn-table-action" style="color:#ef4444;" title="Download Extracted Base64 File Object Assets Document Layer">
+                                        <i class="fa-solid fa-file-pdf"></i>
+                                    </a>
+                                ` : `
+                                    <button class="btn-table-action" style="opacity:0.3; cursor:not-allowed;" disabled title="No PDF document payload available for download on this record element block">
+                                        <i class="fa-solid fa-ban"></i>
+                                    </button>
+                                `}
+                                <button class="btn-table-action btn-action-delete" onclick="triggerDestructivePurgeConfirmationModal('${item.id}', 'completed')" title="Permanently Delete Entry Element from Repository Ledger Core">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+      
+        function approvePendingProjectRecordNode(recordId) {
+            let pendingList = JSON.parse(localStorage.getItem(KEY_PENDING)) || [];
+            let completedList = JSON.parse(localStorage.getItem(KEY_COMPLETED)) || [];
+
+            const indexPositionTarget = pendingList.findIndex(item => item.id === recordId);
+            if (indexPositionTarget !== -1) {
+                let targetRecordItem = pendingList[indexPositionTarget];
+                
+             
+                targetRecordItem.status = "completed";
+                targetRecordItem.id = 'FUG_PROJ_' + Date.now().toString().slice(-6); 
+                targetRecordItem.supervisor = targetRecordItem.supervisor || "Faculty Allocation Committee Panel";
+
+                
+                completedList.push(targetRecordItem);
+                pendingList.splice(indexPositionTarget, 1);
+
+                localStorage.setItem(KEY_PENDING, JSON.stringify(pendingList));
+                localStorage.setItem(KEY_COMPLETED, JSON.stringify(completedList));
+
+                refreshDataRepositoryViews();
+                triggerToastNotification("Pending topic allocation successfully audited, approved and updated into permanent records array tiers.", "approval");
+            }
+        }
+
+       
+        function triggerDestructivePurgeConfirmationModal(recordId, scopeType) {
+            globalDeletionPointerTargetId = recordId;
+            globalDeletionPointerTargetScopeType = scopeType;
+
+            const completedList = JSON.parse(localStorage.getItem(KEY_COMPLETED)) || [];
+            const pendingList = JSON.parse(localStorage.getItem(KEY_PENDING)) || [];
+            
+            let matchedRecordObject = null;
+            if (scopeType === 'completed') {
+                matchedRecordObject = completedList.find(item => item.id === recordId);
+            } else {
+                matchedRecordObject = pendingList.find(item => item.id === recordId);
+            }
+
+            if (matchedRecordObject) {
+                document.getElementById('deleteTargetIdLabel').textContent = matchedRecordObject.id;
+                document.getElementById('deleteTargetTitleLabel').textContent = matchedRecordObject.projectName;
+                
+               
+                document.getElementById('executePurgeActionButton').onclick = function() {
+                    commitPermanentErasurePurgeExecutionOperation();
+                };
+
+                document.getElementById('destructiveActionConfirmModal').style.display = 'flex';
+            }
+        }
+
+        function closeDestructiveConfirmationModal() {
+            document.getElementById('destructiveActionConfirmModal').style.display = 'none';
+            globalDeletionPointerTargetId = null;
+            globalDeletionPointerTargetScopeType = "";
+        }
+
+      
+        function commitPermanentErasurePurgeExecutionOperation() {
+            if (!globalDeletionPointerTargetId || !globalDeletionPointerTargetScopeType) return;
+
+            const targetKey = (globalDeletionPointerTargetScopeType === 'completed') ? KEY_COMPLETED : KEY_PENDING;
+            let targetDbArrayDataList = JSON.parse(localStorage.getItem(targetKey)) || [];
+
+            targetDbArrayDataList = targetDbArrayDataList.filter(item => item.id !== globalDeletionPointerTargetId);
+            localStorage.setItem(targetKey, JSON.stringify(targetDbArrayDataList));
+
+            closeDestructiveConfirmationModal();
+            refreshDataRepositoryViews();
+            triggerToastNotification("The target research data node element has been completely eradicated from the system localized configuration arrays safely.", "delete");
+        }
+
+      
+        function invokeRecordInspectorViewerPanel(recordId) {
+            const completedList = JSON.parse(localStorage.getItem(KEY_COMPLETED)) || [];
+            const record = completedList.find(item => item.id === recordId);
+
+            if (!record) return;
+
+            const modalBody = document.getElementById('inspectorModalMainBody');
+            modalBody.innerHTML = `
+                <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Reviewing full system record properties array details for verification index audit tracking trails:</p>
+                <div class="entity-profile-card" style="max-height: 380px; overflow-y: auto;">
+                    <div class="entity-row-item"><div class="entity-label">System UID</div><div class="entity-value" style="font-family:monospace; font-weight:700;">${record.id}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Project Name</div><div class="entity-value" style="font-weight:700; color:var(--primary-dark);">${record.projectName}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Abstract Context</div><div class="entity-value" style="font-size:11.5px; line-height:1.5;">${record.summary}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Student Name</div><div class="entity-value"><strong>${record.studentName}</strong></div></div>
+                    <div class="entity-row-item"><div class="entity-label">Admission Number</div><div class="entity-value" style="font-family:monospace;">${record.admissionNumber}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Department Unit</div><div class="entity-value">${record.department}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Academic Level</div><div class="entity-value">${record.level}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Assigned Supervisor</div><div class="entity-value">${record.supervisor}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Archived Date</div><div class="entity-value">${record.dateCreated}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Deployment Link</div><div class="entity-value"><a href="${record.projectLink}" target="_blank" style="color:var(--primary-color); word-break:break-all;">${record.projectLink}</a></div></div>
+                    <div class="entity-row-item"><div class="entity-label">Binary Attachment</div><div class="entity-value">${record.pdfData ? '<span style="color:var(--accent-color); font-weight:700;"><i class="fa-solid fa-paperclip"></i> Base64 Binary Stream Present</span>' : '<span style="color:var(--text-muted); font-style:italic;">No Document Attachment Linked</span>'}</div></div>
+                </div>
+            `;
+
+            document.getElementById('inspectorRecordViewModal').style.display = 'flex';
+        }
+
+        function closeInspectorModalView() {
+            document.getElementById('inspectorRecordViewModal').style.display = 'none';
+        }
+
+      
+        function triggerToastNotification(messageText, notificationTypeThemeStyleString) {
+            const toastFrame = document.getElementById('systemToastPopNotification');
+            const messageSlot = document.getElementById('toastFeedbackComponentMessage');
+            const iconSlot = document.getElementById('toastFeedbackComponentIcon');
+
+            messageSlot.textContent = messageText;
+            
+           
+            iconSlot.className = "fa-solid";
+            
+            if (notificationTypeThemeStyleString === "success") {
+                iconSlot.classList.add('fa-circle-check', 'toast-icon-success');
+                toastFrame.style.borderLeft = "4px solid var(--accent-color)";
+            } else if (notificationTypeThemeStyleString === "delete") {
+                iconSlot.classList.add('fa-circle-exclamation', 'toast-icon-delete');
+                toastFrame.style.borderLeft = "4px solid #ff5252";
+            } else if (notificationTypeThemeStyleString === "approval") {
+                iconSlot.classList.add('fa-envelope-open-text', 'toast-icon-approval');
+                toastFrame.style.borderLeft = "4px solid #448aff";
+            }
+
+            toastFrame.style.display = 'flex';
+            setTimeout(() => {
+                toastFrame.style.opacity = '1';
+                setTimeout(() => {
+                    toastFrame.style.display = 'none';
+                }, 4500);
+            }, 50);
+        }
+    </script>
+</body>
+</html>

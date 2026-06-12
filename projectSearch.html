@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Verification Engine - FUG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0052cc;
+            --primary-dark: #003399;
+            --primary-light: #e6f0ff;
+            --accent-color: #00c853;
+            --accent-light: #e8f5e9;
+            --warning-color: #ff9100;
+            --warning-light: #fff3e0;
+            --danger-color: #d32f2f;
+            --danger-light: #ffebee;
+            --text-dark: #1c2d42;
+            --text-muted: #66788a;
+            --bg-light: #f4f7fc;
+            --bg-white: #ffffff;
+            --border-color: #cbd5e1;
+            --card-shadow: 0 10px 25px rgba(0, 82, 204, 0.06);
+            --transition-speed: 0.25s;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://i.imgur.com/MoHW4ON.png');
+            background-repeat: repeat;
+            background-size: 160px;
+            opacity: 0.09;
+            z-index: -1;
+            pointer-events: none;
+        }
+        header {
+            background-color: var(--primary-dark);
+            color: var(--bg-white);
+            padding: 16px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-link-btn {
+            color: var(--bg-white);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 8px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--transition-speed);
+        }
+        .back-link-btn:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        .header-meta h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .header-meta p {
+            font-size: 11px;
+            opacity: 0.85;
+        }
+        .header-right-icon {
+            font-size: 22px;
+            opacity: 0.9;
+        }
+        .engine-wrapper {
+            max-width: 800px;
+            width: 100%;
+            margin: 24px auto 60px auto;
+            padding: 0 16px;
+            flex-grow: 1;
+        }
+        .engine-card-panel {
+            background: var(--bg-white);
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: var(--card-shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .panel-headline-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+        .form-input-group i {
+            position: absolute;
+            left: 14px;
+            top: 15px;
+            color: var(--text-muted);
+            font-size: 15px;
+            transition: color var(--transition-speed);
+        }
+        .form-control-input {
+            width: 100%;
+            padding: 13px 16px 13px 42px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-dark);
+            background-color: var(--bg-white);
+            outline: none;
+            transition: all var(--transition-speed);
+        }
+        .form-control-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.12);
+        }
+        .form-control-input:focus + i {
+            color: var(--primary-color);
+        }
+        textarea.form-control-input {
+            min-height: 110px;
+            resize: vertical;
+        }
+        textarea.form-control-input + i {
+            top: 16px;
+        }
+        .form-action-row {
+            display: flex;
+            gap: 12px;
+        }
+        .btn-core-action {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all var(--transition-speed);
+        }
+        .btn-primary-check {
+            background-color: var(--primary-color);
+            color: var(--bg-white);
+            box-shadow: 0 4px 12px rgba(0, 82, 204, 0.2);
+        }
+        .btn-primary-check:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        .btn-secondary-clear {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+        }
+        .btn-secondary-clear:hover {
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+        .processing-scanner-overlay {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .scanner-radar-pulse {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 22px;
+            margin-bottom: 20px;
+            animation: radarPulse 1.8s infinite ease-in-out;
+        }
+        @keyframes radarPulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 82, 204, 0.4); }
+            70% { box-shadow: 0 0 0 16px rgba(0, 82, 204, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 82, 204, 0); }
+        }
+        .scanner-progress-container {
+            width: 100%;
+            max-width: 300px;
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 14px;
+        }
+        .scanner-progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+        .scanner-status-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .result-output-wrapper {
+            display: none;
+        }
+        .status-alert-banner {
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .banner-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .banner-content h4 {
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .banner-content p {
+            font-size: 12.5px;
+            opacity: 0.9;
+        }
+        .alert-exists {
+            background-color: var(--danger-light);
+            border: 1px solid rgba(211, 47, 47, 0.2);
+            color: var(--danger-color);
+        }
+        .alert-available {
+            background-color: var(--accent-light);
+            border: 1px solid rgba(0, 200, 83, 0.2);
+            color: #007c33;
+        }
+        .similarity-meter-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background-color: var(--bg-light);
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .meter-radial-display {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: conic-gradient(var(--danger-color) 0%, #e2e8f0 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .meter-radial-display::before {
+            content: "";
+            position: absolute;
+            width: 53px;
+            height: 53px;
+            background-color: var(--bg-light);
+            border-radius: 50%;
+        }
+        .meter-radial-value {
+            position: relative;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-dark);
+            z-index: 5;
+        }
+        .meter-explanation-text h5 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .meter-explanation-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .entity-profile-card {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .entity-row-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            padding: 12px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-white);
+        }
+        .entity-row-item:last-child {
+            border-bottom: none;
+        }
+        .entity-label {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .entity-value {
+            font-weight: 500;
+            color: var(--text-dark);
+            word-break: break-word;
+        }
+        .btn-action-block {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13.5px;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: opacity var(--transition-speed);
+        }
+        .btn-reserve-topic {
+            background-color: var(--accent-color);
+            color: var(--bg-white);
+            box-shadow: 0 4px 10px rgba(0, 200, 83, 0.2);
+            margin-bottom: 10px;
+        }
+        .btn-clear-search {
+            background-color: #64748b;
+            color: var(--bg-white);
+        }
+        .btn-reserve-topic:hover, .btn-clear-search:hover {
+            opacity: 0.9;
+        }
+        .history-stream-nodes, .pending-stream-nodes {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-node-item, .pending-node-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background-color: var(--bg-white);
+            transition: border-color var(--transition-speed);
+        }
+        .history-node-item:hover, .pending-node-item:hover {
+            border-color: var(--primary-color);
+        }
+        .history-node-left, .pending-node-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 85%;
+        }
+        .history-node-icon, .pending-node-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--bg-light);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .history-node-info h4, .pending-node-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .history-node-info p, .pending-node-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+        .btn-delete-pending {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+        }
+        .empty-state {
+            text-align: center;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 16px 0;
+        }
+        .workflow-diagram-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            position: relative;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .workflow-step-node {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .workflow-icon-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        .workflow-step-node:last-child .workflow-icon-circle {
+            background-color: var(--accent-light);
+            color: var(--accent-color);
+        }
+        .workflow-step-node h4 {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 2px;
+        }
+        .workflow-step-node p {
+            font-size: 10px;
+            color: var(--text-muted);
+            max-width: 130px;
+            line-height: 1.3;
+        }
+        .workflow-step-node:not(:last-child)::after {
+            content: "\2192";
+            position: absolute;
+            top: 12px;
+            right: -20%;
+            color: #cbd5e1;
+            font-size: 16px;
+            z-index: 1;
+        }
+        .toast-notification {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: #1e293b;
+            color: var(--bg-white);
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 3000;
+            align-items: center;
+            gap: 10px;
+            animation: toastSlideUp 0.3s ease;
+        }
+        @keyframes toastSlideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast-notification i {
+            color: var(--accent-color);
+            font-size: 16px;
+        }
+        footer {
+            background-color: #0d1b2a;
+            color: #64748b;
+            padding: 24px 16px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            font-size: 12px;
+            margin-top: auto;
+        }
+        @media (max-width: 768px) {
+            .workflow-diagram-container { grid-template-columns: repeat(2, 1fr); gap: 20px 10px; }
+            .workflow-step-node:nth-child(2)::after { display: none; }
+            .workflow-step-node:not(:last-child)::after { right: -10%; }
+        }
+        @media (max-width: 480px) {
+            .form-action-row { flex-direction: column; }
+            .entity-row-item { grid-template-columns: 1fr; gap: 4px; }
+            .workflow-diagram-container { grid-template-columns: 1fr; gap: 20px 0; }
+            .workflow-step-node::after { display: none !important; }
+            .header-meta h1 { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <a href="index.html" class="back-link-btn" title="Back to Homepage">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="header-meta">
+                    <h1>Project Verification Engine</h1>
+                    <p>FUG Academic Anti-Plagiarism Repository Framework</p>
+                </div>
+            </div>
+            <div class="header-right-icon">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="engine-wrapper">
+        
+        <!-- FORM PANEL -->
+        <section class="engine-card-panel">
+            <h2 class="panel-headline-title"><i class="fa-solid fa-magnifying-glass"></i> Check Research Originality</h2>
+            <form id="verificationForm" onsubmit="event.preventDefault(); executeProjectSearchScan();">
+                <div class="form-input-group">
+                    <input type="text" id="projectTitleInput" class="form-control-input" placeholder="Enter Proposed Project Title..." required>
+                    <i class="fa-solid fa-book-bookmark"></i>
+                </div>
+                <div class="form-input-group">
+                    <textarea id="projectSummaryInput" class="form-control-input" placeholder="Enter Project Summary / Abstract..." required></textarea>
+                    <i class="fa-solid fa-file-text"></i>
+                </div>
+                <div class="form-action-row">
+                    <button type="submit" class="btn-core-action btn-primary-check">
+                        <i class="fa-solid fa-shield-halved"></i> Check Project
+                    </button>
+                    <button type="button" class="btn-core-action btn-secondary-clear" onclick="resetVerificationEngineForm()">
+                        <i class="fa-solid fa-trash-can"></i> Clear Form
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- LOADING PANEL -->
+        <section class="engine-card-panel processing-scanner-overlay" id="scannerLoaderView">
+            <div class="scanner-radar-pulse">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <div class="scanner-status-text" id="scannerStatusText">Initializing Linguistic Engine...</div>
+            <div class="scanner-progress-container">
+                <div class="scanner-progress-bar-fill" id="scannerProgressBarFill"></div>
+            </div>
+        </section>
+
+        <!-- RESULTS PANEL -->
+        <section class="engine-card-panel result-output-wrapper" id="analysisResultView">
+            <h2 class="panel-headline-title"><i class="fa-solid fa-chart-pie"></i> Verification Assessment Output</h2>
+            
+            <div id="resultBannerContainer"></div>
+            
+            <div class="similarity-meter-box" id="similarityMeterBox">
+                <div class="meter-radial-display" id="meterRadialDisplay">
+                    <div class="meter-radial-value" id="meterRadialValue">0%</div>
+                </div>
+                <div class="meter-explanation-text">
+                    <h5 id="meterTitleLabel">Plagiarism Vector Match Index</h5>
+                    <p id="meterDescriptionLabel">Linguistic proximity weight matrix mapped from active university document repositories.</p>
+                </div>
+            </div>
+
+            <div class="entity-profile-card" id="entityProfileCardFields"></div>
+            <div id="resultActionCtaContainer"></div>
+        </section>
+
+        <!-- PENDING PROJECTS PANEL -->
+        <section class="engine-card-panel">
+            <h2 class="panel-headline-title"><i class="fa-solid fa-hourglass-half"></i> Pending Projects List</h2>
+            <div class="pending-stream-nodes" id="pendingStreamNodesTarget"></div>
+        </section>
+
+        <!-- RECENT SEARCH LOGS -->
+        <section class="engine-card-panel">
+            <h2 class="panel-headline-title"><i class="fa-solid fa-history"></i> Recent Query Activity Logs</h2>
+            <div class="history-stream-nodes" id="historyStreamNodesTarget"></div>
+        </section>
+
+        <!-- ARCHITECTURE FLOW -->
+        <section class="engine-card-panel">
+            <h2 class="panel-headline-title"><i class="fa-solid fa-circle-nodes"></i> Architecture Verification Engine Flow</h2>
+            <div class="workflow-diagram-container">
+                <div class="workflow-step-node">
+                    <div class="workflow-icon-circle"><i class="fa-solid fa-keyboard"></i></div>
+                    <h4>1. Search</h4>
+                    <p>Enter title terms and abstract statements.</p>
+                </div>
+                <div class="workflow-step-node">
+                    <div class="workflow-icon-circle"><i class="fa-solid fa-code-compare"></i></div>
+                    <h4>2. Cross Exam</h4>
+                    <p>Compare records using similarity logic matrices.</p>
+                </div>
+                <div class="workflow-step-node">
+                    <div class="workflow-icon-circle"><i class="fa-solid fa-chart-simple"></i></div>
+                    <h4>3. Score Metrics</h4>
+                    <p>Review absolute weight percentages output.</p>
+                </div>
+                <div class="workflow-step-node">
+                    <div class="workflow-icon-circle"><i class="fa-solid fa-circle-check"></i></div>
+                    <h4>4. Take Action</h4>
+                    <p>Reserve available topics or change variations.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast-notification" id="toastNotificationView">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMessageText">Record updated successfully.</span>
+    </div>
+
+    <footer>
+        &copy; 2026 FUG - Department of Computer Science. All Rights Reserved. System Integrity Core Tier-1.
+    </footer>
+
+    <script>
+        const KEY_COMPLETED = 'completedProjects';
+        const KEY_PENDING = 'pendingProjects';
+        const KEY_HISTORY = 'searchHistory';
+
+        let activeProposedTitle = '';
+        let activeProposedSummary = '';
+
+        document.addEventListener("DOMContentLoaded", function() {
+            ensureLocalStorageDataSeeding();
+            renderSearchHistoryList();
+            renderPendingProjectsList();
+        });
+
+        function ensureLocalStorageDataSeeding() {
+            if (!localStorage.getItem(KEY_COMPLETED)) {
+                const defaultCompleted = [
+                    {
+                        id: 1,
+                        projectName: "Development of a Blockchain-Based Academic Project Verification and Anti-Plagiarism Repository System",
+                        summary: "A blockchain-powered academic repository system capable of project verification, originality checking, and secure record storage.",
+                        studentName: "Ibrahim Abdulhakim",
+                        admissionNumber: "FUG/CSC/2026/001",
+                        dateCreated: "07/10/2026",
+                        status: "completed"
+                    },
+                    {
+                        id: 2,
+                        projectName: "Smart Agriculture Pest Detection System",
+                        summary: "Artificial intelligence system for detecting crop pests and diseases.",
+                        studentName: "Muhammad Sani",
+                        admissionNumber: "FUG/CSC/2025/014",
+                        dateCreated: "15/09/2025",
+                        status: "completed"
+                    }
+                ];
+                localStorage.setItem(KEY_COMPLETED, JSON.stringify(defaultCompleted));
+            }
+            if (!localStorage.getItem(KEY_PENDING)) {
+                localStorage.setItem(KEY_PENDING, JSON.stringify([]));
+            }
+            if (!localStorage.getItem(KEY_HISTORY)) {
+                localStorage.setItem(KEY_HISTORY, JSON.stringify([]));
+            }
+        }
+
+        function resetVerificationEngineForm() {
+            const form = document.getElementById('verificationForm');
+            if (form) form.reset();
+            hideResultsAndLoaders();
+        }
+
+        function hideResultsAndLoaders() {
+            const analysisView = document.getElementById('analysisResultView');
+            if (analysisView) analysisView.style.display = 'none';
+            const loaderView = document.getElementById('scannerLoaderView');
+            if (loaderView) loaderView.style.display = 'none';
+        }
+
+        function calculateSimilarityMetricIndex(inputString, targetString) {
+            if (!inputString || !targetString) return 0;
+            const cleanTokens = (str) => str.toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .split(/\s+/)
+                .filter(token => token.length > 2);
+
+            const inputTokens = cleanTokens(inputString);
+            const targetTokens = cleanTokens(targetString);
+
+            if (inputTokens.length === 0) return 0;
+
+            let matchCount = 0;
+            inputTokens.forEach(token => {
+                if (targetTokens.includes(token)) matchCount++;
+            });
+
+            return Math.round((matchCount / inputTokens.length) * 100);
+        }
+
+        function executeProjectSearchScan() {
+            activeProposedTitle = document.getElementById('projectTitleInput').value.trim();
+            activeProposedSummary = document.getElementById('projectSummaryInput').value.trim();
+
+            if (!activeProposedTitle || !activeProposedSummary) return;
+
+            const loaderView = document.getElementById('scannerLoaderView');
+            const analysisView = document.getElementById('analysisResultView');
+            const statusText = document.getElementById('scannerStatusText');
+            const barFill = document.getElementById('scannerProgressBarFill');
+
+            analysisView.style.display = 'none';
+            loaderView.style.display = 'flex';
+            barFill.style.width = '0%';
+
+            const stages = [
+                { percent: 30, text: "Running Linguistic Normalization..." },
+                { percent: 65, text: "Cross-referencing Local Repository Databases..." },
+                { percent: 100, text: "Synthesizing Security Weight Evaluation Matrix..." }
+            ];
+
+            stages.forEach((stage, index) => {
+                setTimeout(() => {
+                    barFill.style.width = `${stage.percent}%`;
+                    statusText.innerText = stage.text;
+
+                    if (index === stages.length - 1) {
+                        setTimeout(() => {
+                            loaderView.style.display = 'none';
+                            processVerificationAssessmentScore();
+                        }, 600);
+                    }
+                }, (index + 1) * 700);
+            });
+        }
+
+        function processVerificationAssessmentScore() {
+            const completed = JSON.parse(localStorage.getItem(KEY_COMPLETED)) || [];
+            const pending = JSON.parse(localStorage.getItem(KEY_PENDING)) || [];
+            const allRecords = [...completed, ...pending];
+
+            let highestScore = 0;
+            let matchedRecord = null;
+
+            allRecords.forEach(record => {
+                const titleScore = calculateSimilarityMetricIndex(activeProposedTitle, record.projectName);
+                const summaryScore = calculateSimilarityMetricIndex(activeProposedSummary, record.summary);
+                const combinedScore = Math.max(titleScore, summaryScore);
+
+                if (combinedScore > highestScore) {
+                    highestScore = combinedScore;
+                    matchedRecord = record;
+                }
+            });
+
+            saveToSearchHistoryLog(activeProposedTitle, highestScore);
+
+            const resultBanner = document.getElementById('resultBannerContainer');
+            const meterDisplay = document.getElementById('meterRadialDisplay');
+            const meterValue = document.getElementById('meterRadialValue');
+            const profileFields = document.getElementById('entityProfileCardFields');
+            const actionCta = document.getElementById('resultActionCtaContainer');
+
+            meterValue.innerText = `${highestScore}%`;
+            meterDisplay.style.background = `conic-gradient(${highestScore >= 40 ? 'var(--danger-color)' : 'var(--accent-color)'} ${highestScore}%, #e2e8f0 0%)`;
+
+            if (highestScore >= 40 && matchedRecord) {
+                resultBanner.innerHTML = `
+                    <div class="status-alert-banner alert-exists">
+                        <div class="banner-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div class="banner-content">
+                            <h4>PROJECT MATCH FOUND / PLAGIARISM DETECTED</h4>
+                            <p>This research profile closely conflicts with an existing institutional record.</p>
+                        </div>
+                    </div>
+                `;
+
+                profileFields.innerHTML = `
+                    <div class="entity-row-item"><div class="entity-label">Matched Title</div><div class="entity-value">${matchedRecord.projectName}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Author/Student</div><div class="entity-value">${matchedRecord.studentName || 'N/A'}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">ID Number</div><div class="entity-value">${matchedRecord.admissionNumber || 'N/A'}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Status</div><div class="entity-value" style="text-transform:uppercase; font-weight:700; color:var(--danger-color)">${matchedRecord.status}</div></div>
+                `;
+
+                actionCta.innerHTML = `
+                    <button class="btn-action-block btn-clear-search" onclick="clearSearchOutputOnly()">
+                        <i class="fa-solid fa-eraser"></i> Clear Search
+                    </button>
+                `;
+            } else {
+                resultBanner.innerHTML = `
+                    <div class="status-alert-banner alert-available">
+                        <div class="banner-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="banner-content">
+                            <h4>PROJECT ORIGINALITY APPROVED</h4>
+                            <p>MESSAGE: This project does not exist within our current repository indices. You can append this record to the pending staging stack to secure your allocation priority.</p>
+                        </div>
+                    </div>
+                `;
+
+                profileFields.innerHTML = `
+                    <div class="entity-row-item"><div class="entity-label">Proposed Title</div><div class="entity-value">${activeProposedTitle}</div></div>
+                    <div class="entity-row-item"><div class="entity-label">Linguistic Assessment</div><div class="entity-value">Excellent (No repository overlapping found)</div></div>
+                `;
+
+                actionCta.innerHTML = `
+                    <button class="btn-action-block btn-reserve-topic" onclick="addActiveProjectToPending()">
+                        <i class="fa-solid fa-plus"></i> Add to Pending
+                    </button>
+                    <button class="btn-action-block btn-clear-search" onclick="clearSearchOutputOnly()">
+                        <i class="fa-solid fa-eraser"></i> Clear Search
+                    </button>
+                `;
+            }
+
+            document.getElementById('analysisResultView').style.display = 'block';
+        }
+
+        function addActiveProjectToPending() {
+            if (!activeProposedTitle) return;
+
+            const pending = JSON.parse(localStorage.getItem(KEY_PENDING)) || [];
+            
+            const newPending = {
+                id: Date.now(),
+                projectName: activeProposedTitle,
+                summary: activeProposedSummary,
+                studentName: "Awaiting Registration",
+                admissionNumber: "PENDING/FUG/" + Math.floor(1000 + Math.random() * 9000),
+                dateCreated: new Date().toLocaleDateString(),
+                status: "pending"
+            };
+
+            pending.push(newPending);
+            localStorage.setItem(KEY_PENDING, JSON.stringify(pending));
+
+            showToastNotification("Project successfully added to Pending list!");
+            renderPendingProjectsList();
+            clearSearchOutputOnly();
+        }
+
+        function deletePendingProject(id) {
+            let pending = JSON.parse(localStorage.getItem(KEY_PENDING)) || [];
+            pending = pending.filter(item => item.id !== id);
+            localStorage.setItem(KEY_PENDING, JSON.stringify(pending));
+            
+            showToastNotification("Pending project tracking removed.");
+            renderPendingProjectsList();
+        }
+
+        function clearSearchOutputOnly() {
+            const analysisView = document.getElementById('analysisResultView');
+            if (analysisView) analysisView.style.display = 'none';
+            renderPendingProjectsList();
+        }
+
+        function saveToSearchHistoryLog(title, score) {
+            const history = JSON.parse(localStorage.getItem(KEY_HISTORY)) || [];
+            history.unshift({
+                title: title,
+                score: score,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+            if (history.length > 5) history.pop();
+            localStorage.setItem(KEY_HISTORY, JSON.stringify(history));
+            renderSearchHistoryList();
+        }
+
+        function renderPendingProjectsList() {
+            const target = document.getElementById('pendingStreamNodesTarget');
+            const pending = JSON.parse(localStorage.getItem(KEY_PENDING)) || [];
+
+            if (pending.length === 0) {
+                target.innerHTML = `<div class="empty-state">No pending project proposals staged in this session.</div>`;
+                return;
+            }
+
+            target.innerHTML = pending.map(item => `
+                <div class="pending-node-item">
+                    <div class="pending-node-left">
+                        <div class="pending-node-icon"><i class="fa-solid fa-clock"></i></div>
+                        <div class="pending-node-info">
+                            <h4>${item.projectName}</h4>
+                            <p>${item.admissionNumber} &bull; Staged: ${item.dateCreated}</p>
+                        </div>
+                    </div>
+                    <button class="btn-delete-pending" onclick="deletePendingProject(${item.id})" title="Delete Record">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderSearchHistoryList() {
+            const target = document.getElementById('historyStreamNodesTarget');
+            const history = JSON.parse(localStorage.getItem(KEY_HISTORY)) || [];
+
+            if (history.length === 0) {
+                target.innerHTML = `<div class="empty-state">No engine logs generated yet. Enter queries above.</div>`;
+                return;
+            }
+
+            target.innerHTML = history.map(log => `
+                <div class="history-node-item">
+                    <div class="history-node-left">
+                        <div class="history-node-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                        <div class="history-node-info">
+                            <h4>${log.title}</h4>
+                            <p>Verification Match Index: ${log.score}% &bull; Logged at ${log.timestamp}</p>
+                        </div>
+                    </div>
+                    <div class="history-chevron"><i class="fa-solid fa-chevron-right"></i></div>
+                </div>
+            `).join('');
+        }
+
+        function showToastNotification(message) {
+            const toast = document.getElementById('toastNotificationView');
+            document.getElementById('toastMessageText').innerText = message;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+    </script>
+</body>
+</html>
